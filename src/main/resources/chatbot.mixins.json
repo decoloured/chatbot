@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.decoloured.chatbot.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "ChatBotMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

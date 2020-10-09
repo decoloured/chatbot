@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "chatbot",
+  "version": "${version}",
+
+  "name": "SMPwoah Chat Bot",
+  "description": "Chat integration for SMPwoah",
+  "authors": [
+    "decoloured"
+  ],
+  "contact": {
+    "homepage": "https://github.com/decoloured/chatbot",
+    "sources": "https://github.com/decoloured/chatbot"
+  },
+
+  "license": "MIT",
+  "icon": "assets/chatbot/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.decoloured.chatbot.ChatBot"
+    ]
+  },
+  "mixins": [
+    "chatbot.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*",
+    "fabritone": "*"
+  }
+}
