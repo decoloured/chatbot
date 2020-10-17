@@ -1,15 +1,25 @@
 package me.decoloured.chatbot.mixin;
 
-import net.minecraft.client.gui.screen.TitleScreen;
+import net.minecraft.client.gui.hud.ChatHudListener;
+import net.minecraft.network.MessageType;
+import net.minecraft.text.Text;
+
+import java.util.UUID;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(TitleScreen.class)
+import me.decoloured.chatbot.ChatBot;
+
+@Mixin(ChatHudListener.class)
 public class ChatBotMixin {
-	@Inject(at = @At("HEAD"), method = "init()V")
-	private void init(CallbackInfo info) {
-		System.out.println("This line is printed by an example mod mixin!");
+	@Inject(method = "onChatMessage", at = @At("HEAD"))
+	private void message(MessageType messageType, Text message, UUID senderUuid, CallbackInfo info) {
+		if (message.getString().substring(message.getString().indexOf(">") + 2).startsWith("!")) {
+			ChatBot.getInstance();
+			ChatBot.debug(messageType, message, senderUuid);
+		}
 	}
 }
