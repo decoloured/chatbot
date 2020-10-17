@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.decoloured.chatbot.ChatBot"
+      "me.decoloured.chatbot.ChatBotInitializer"
     ]
   },
   "mixins": [
