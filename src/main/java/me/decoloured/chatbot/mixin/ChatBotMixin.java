@@ -20,6 +20,9 @@ public class ChatBotMixin {
 		if (message.getString().substring(message.getString().indexOf(">") + 2).startsWith("!")) {
 			ChatBot.getInstance();
 			ChatBot.debug(messageType, message, senderUuid);
+		} else {
+			ChatBot.getInstance();
+			ChatBot.debugInfo(messageType, message, senderUuid);
 		}
 	}
 }
