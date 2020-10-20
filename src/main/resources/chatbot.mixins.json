@@ -6,7 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "ChatBotMixin"
+    "ChatBotMixin",
+    "ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
