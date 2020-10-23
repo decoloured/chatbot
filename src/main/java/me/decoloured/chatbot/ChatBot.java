@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.Text;
 
@@ -17,7 +18,7 @@ public class ChatBot {
     return instance;
   }
 
-  public static void debug(MessageType messageType, Text message, UUID senderUuid) {
+  public static void command(MessageType messageType, Text message, UUID senderUuid) {
     debugInfo(messageType, message, senderUuid);
     String command = message.getString().substring(message.getString().indexOf(">") + 2);
     String senderName = message.getString().substring(1, message.getString().indexOf(">"));
@@ -37,9 +38,9 @@ public class ChatBot {
           player.sendChatMessage("please enter coordinates");
         }
         break;
-      case "!follow":
+      case "!follow": case "!f":
         try {
-          player.sendChatMessage(";follow player " + commandStrings[1]);
+          player.sendChatMessage(";follow player " + concatCommand(commandStrings));
         } catch (Exception e) {
           player.sendChatMessage("please enter a player name");
         }
@@ -56,10 +57,21 @@ public class ChatBot {
         }
         break;
       case "!loc": case "!l": case "!location":
-        player.sendChatMessage(String.format("xyz: %.1f %.1f %.1f", MinecraftClient.getInstance().player.getX(), MinecraftClient.getInstance().player.getY(), MinecraftClient.getInstance().player.getZ()));
+        player.sendChatMessage(String.format("xyz: %.1f %.1f %.1f", 
+          player.getX(), player.getY(), player.getZ()));
         break;
       case "!debug":
         player.sendChatMessage(senderName);
+        break;
+      case "!item": case "!i":
+        ItemStack itemStack = player.getMainHandStack();
+        if (itemStack.isDamageable()) {
+          int itemStackDurability = itemStack.getMaxDamage() - itemStack.getDamage();
+          player.sendChatMessage(String.format("%s: %s/%s (%.1f%%)", itemStack.getItem().toString(), 
+            itemStackDurability, itemStack.getMaxDamage(), (float) (itemStackDurability / itemStack.getMaxDamage()) * 100));
+        } else {
+          player.sendChatMessage(String.format("%s", itemStack.getName().asOrderedText().toString()));
+        }
         break;
       case "!h": case "!help":
         if (commandStrings.length == 1) {
@@ -78,6 +90,21 @@ public class ChatBot {
             case "goto":
               player.sendChatMessage("usage: !goto [x] [y] [z], !goto [x] [z], !goto [y]");
               player.sendChatMessage("sends " + player.getEntityName() + " to said coordinates");
+              break;
+            case "follow": case "f":
+              player.sendChatMessage("usage: !follow [player] [player2...]");
+              player.sendChatMessage("alias: !f");
+              player.sendChatMessage("sends " + player.getEntityName() + " to said player(s)");
+              break;
+            case "echo": case "reply": case "r":
+              player.sendChatMessage("usage: !echo [message]");
+              player.sendChatMessage("alias: !reply, !r");
+              player.sendChatMessage("echos a message, cannot enter commands");
+              break;
+            case "location": case "loc": case "l":
+              player.sendChatMessage("usage: !location");
+              player.sendChatMessage("alias: !loc, !l");
+              player.sendChatMessage("sends location of " + player.getEntityName());
               break;
             default:
               player.sendChatMessage("command not found: " + commandStrings[1]);
