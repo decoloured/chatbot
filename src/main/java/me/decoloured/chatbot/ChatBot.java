@@ -139,7 +139,7 @@ public class ChatBot {
         break;
       case "!h": case "!help":
         if (commandStrings.length == 1) {
-          p.sendChatMessage("commands: !scoreboard [objective] - !goto [x] [y] [z] - !echo [text] - !location - !item - !near - !ping - !tps - !help");
+          p.sendChatMessage("commands: !scoreboard - !goto - !echo - !location - !item - !near - !ping - !tps - !portal - !help");
         } else {
           switch (commandStrings[1].replace("!", "")) {
             case "help": case "h":
@@ -189,6 +189,9 @@ public class ChatBot {
               p.sendChatMessage("usage: !tps");
               p.sendChatMessage("returns server's current tps (ticks per second)");
               break;
+            case "portal":
+              p.sendChatMessage("usage: !portal [dimension] [x] [y] [z]");
+              p.sendChatMessage("returns portal coordinates for portal linking");
             default:
               p.sendChatMessage("help: command not found: " + commandStrings[1]);
               break;
