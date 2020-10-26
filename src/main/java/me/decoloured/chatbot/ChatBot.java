@@ -25,7 +25,7 @@ public class ChatBot {
     return instance;
   }
 
-  public void command(MessageType messageType, Text message, UUID senderUuid) {
+  public static void command(MessageType messageType, Text message, UUID senderUuid) {
     debugInfo(messageType, message, senderUuid);
     String command = message.getString().substring(message.getString().indexOf(">") + 2);
     String senderName = message.getString().substring(1, message.getString().indexOf(">"));
@@ -34,7 +34,7 @@ public class ChatBot {
     Collections.sort(players, new Comparator<AbstractClientPlayerEntity>(){
       @Override
       public int compare(AbstractClientPlayerEntity p1, AbstractClientPlayerEntity p2) {
-          return Math.round(p2.distanceTo(client.player) - p1.distanceTo(client.player));
+          return Math.round(p1.distanceTo(client.player) - p2.distanceTo(client.player));
       }
     });
     switch (commandStrings[0]) {
@@ -52,7 +52,8 @@ public class ChatBot {
           p.sendChatMessage("goto: please enter coordinates");
         }
         break;
-      case "!follow": case "!f":
+      case "!follow":
+      case "!f":
         if (players.toString().contains(commandStrings[1])) {
           p.sendChatMessage(";follow player " + commandStrings[1]);
           p.sendChatMessage("following player " + commandStrings[1]);
@@ -60,7 +61,9 @@ public class ChatBot {
           p.sendChatMessage(commandStrings[1] + " is not in close proximity of " + p.getEntityName());
         }
         break;
-      case "!r": case "!reply": case "!echo":
+      case "!r":
+      case "!reply":
+      case "!echo":
         try {
           if (commandStrings[1].startsWith("/")) {
             p.sendChatMessage("echo: access denied");
@@ -71,20 +74,23 @@ public class ChatBot {
           p.sendChatMessage("echo: enter message");
         }
         break;
-      case "!loc": case "!l": case "!location":
+      case "!loc":
+      case "!l":
+      case "!location":
         p.sendChatMessage(String.format("xyz: %.1f %.1f %.1f", p.getX(), p.getY(), p.getZ()));
         break;
       case "!debug":
         p.sendChatMessage(senderName);
         break;
-      case "!item": case "!i":
+      case "!item":
+      case "!i":
         ItemStack itemStack = p.getMainHandStack();
         if (itemStack.isDamageable()) {
           int itemStackDurability = itemStack.getMaxDamage() - itemStack.getDamage();
-          p.sendChatMessage(String.format("%s: %s/%s [%.1f%%]", itemStack.getItem().toString(), 
-            itemStackDurability, itemStack.getMaxDamage(), (float) (itemStackDurability / itemStack.getMaxDamage()) * 100));
+          p.sendChatMessage(String.format("%s: %s/%s [%.1f%%]", itemStack.getItem().toString(), itemStackDurability,
+              itemStack.getMaxDamage(), (float) (itemStackDurability / itemStack.getMaxDamage()) * 100));
         } else {
-          p.sendChatMessage(String.format("%s", itemStack.getName().asOrderedText().toString()));
+          p.sendChatMessage(String.format("%s", itemStack.getItem().toString()));
         }
         break;
       case "!nearby":
@@ -97,12 +103,15 @@ public class ChatBot {
           }
         }
         break;
-      case "!ping": case "!p":
+      case "!ping":
+      case "!p":
         if (commandStrings.length == 1) {
-          p.sendChatMessage(senderName + " ping: [" + client.getNetworkHandler().getPlayerListEntry(senderName).getLatency() + "ms]");
+          p.sendChatMessage(
+              senderName + "\'s ping: [" + client.getNetworkHandler().getPlayerListEntry(senderName).getLatency() + "ms]");
         } else {
           try {
-            p.sendChatMessage(commandStrings[1] + " ping: [" + client.getNetworkHandler().getPlayerListEntry(commandStrings[1]).getLatency() + "ms]");
+            p.sendChatMessage(commandStrings[1] + " ping: ["
+                + client.getNetworkHandler().getPlayerListEntry(commandStrings[1]).getLatency() + "ms]");
           } catch (Exception e) {
             p.sendChatMessage("ping: player not found \'" + commandStrings[1] + "\'");
           }
@@ -118,36 +127,37 @@ public class ChatBot {
             break;
           default:
             try {
-              if (commandStrings[1].toLowerCase() == "innether") {
-                p.sendChatMessage(String.format("%.0f %s %.0f", 
-                  Float.parseFloat(commandStrings[2]) / 8, 
-                  commandStrings[3], 
-                  Float.parseFloat(commandStrings[2]) / 8));
-              } else if (commandStrings[1].toLowerCase() == "inoverworld") {
-                p.sendChatMessage(String.format("%.0f %s %.0f", 
-                  Float.parseFloat(commandStrings[2]) * 8, 
-                  commandStrings[3], 
-                  Float.parseFloat(commandStrings[2]) * 8));
+              if (commandStrings[1].startsWith("o")) {
+                p.sendChatMessage(String.format("portal nether coordinates: %.0f %s %.0f", Float.parseFloat(commandStrings[2]) / 8,
+                    commandStrings[3], Float.parseFloat(commandStrings[2]) / 8));
+              } else if (commandStrings[1].startsWith("n")) {
+                p.sendChatMessage(String.format("portal overworld coordinates: %.0f %s %.0f", Float.parseFloat(commandStrings[2]) * 8,
+                    commandStrings[3], Float.parseFloat(commandStrings[2]) * 8));
               } else {
                 p.sendChatMessage("portal: invalid dimension \'" + commandStrings[1] + "\'");
+                p.sendChatMessage(commandStrings[1]);
               }
             } catch (Exception e) {
               p.sendChatMessage("portal: please enter coordinates");
             }
-            
+
         }
         break;
-      case "!h": case "!help":
+      case "!h":
+      case "!help":
         if (commandStrings.length == 1) {
-          p.sendChatMessage("commands: !scoreboard - !goto - !echo - !location - !item - !near - !ping - !tps - !portal - !help");
+          p.sendChatMessage(
+              "commands: !scoreboard - !goto - !echo - !location - !item - !near - !ping - !tps - !portal - !help");
         } else {
           switch (commandStrings[1].replace("!", "")) {
-            case "help": case "h":
+            case "help":
+            case "h":
               p.sendChatMessage("usage: !help [command]");
               p.sendChatMessage("alias: !h");
               p.sendChatMessage("shows all commands or description on command");
               break;
-            case "scoreboard": case "s":
+            case "scoreboard":
+            case "s":
               p.sendChatMessage("usage: !scoreboard [objective]");
               p.sendChatMessage("alias: !s");
               p.sendChatMessage("changes sidebar objective, hides sidebar if no objective is given");
@@ -156,31 +166,38 @@ public class ChatBot {
               p.sendChatMessage("usage: !goto [x] [y] [z], !goto [x] [z], !goto [y]");
               p.sendChatMessage("sends " + p.getEntityName() + " to said coordinates");
               break;
-            case "follow": case "f":
+            case "follow":
+            case "f":
               p.sendChatMessage("usage: !follow [player] [player2...]");
               p.sendChatMessage("alias: !f");
               p.sendChatMessage("sends " + p.getEntityName() + " to said player(s)");
               break;
-            case "echo": case "reply": case "r":
+            case "echo":
+            case "reply":
+            case "r":
               p.sendChatMessage("usage: !echo [message]");
               p.sendChatMessage("alias: !reply, !r");
               p.sendChatMessage("echos a message, cannot enter commands");
               break;
-            case "location": case "loc": case "l":
+            case "location":
+            case "loc":
+            case "l":
               p.sendChatMessage("usage: !location");
               p.sendChatMessage("alias: !loc, !l");
               p.sendChatMessage("returns location of " + p.getEntityName());
               break;
-            case "item": case "i":
+            case "item":
+            case "i":
               p.sendChatMessage("usage: !item");
               p.sendChatMessage("alias: !i");
               p.sendChatMessage("returns currently held item information from " + p.getEntityName());
               break;
-            case "!nearby": 
+            case "!nearby":
               p.sendChatMessage("usage: !nearby");
               p.sendChatMessage("returns nearby players and their health, name and distance from " + p.getEntityName());
               break;
-            case "!ping": case "!p":
+            case "!ping":
+            case "!p":
               p.sendChatMessage("usage: !ping [player]");
               p.sendChatMessage("alias: !p");
               p.sendChatMessage("returns ping of player");
@@ -204,7 +221,7 @@ public class ChatBot {
     }
   }
 
-  public String concatCommand(String[] array) {
+  public static String concatCommand(String[] array) {
     String result = "";
     for (int i = 1; i < array.length; i++) {
       result += array[i] + " ";
@@ -212,13 +229,13 @@ public class ChatBot {
     return result;
   }
 
-  public void debugInfo(MessageType messageType, Text message, UUID senderUuid) {
+  public static void debugInfo(MessageType messageType, Text message, UUID senderUuid) {
     System.out.println("MESSAGETYPE: " + messageType.toString());
     System.out.println("MESSAGE: " + message.getString());
     System.out.println("SENDER: " + senderUuid.toString());
   }
 
-  public void updateTPS(long totalWorldTime) {
+  public static void updateTPS(long totalWorldTime) {
     long currentTime = System.nanoTime();
     long elapsedTicks = totalWorldTime - ChatBot.lastServerTick;
     if (elapsedTicks > 0) {

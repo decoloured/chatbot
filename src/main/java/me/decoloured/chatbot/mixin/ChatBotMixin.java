@@ -18,9 +18,11 @@ public class ChatBotMixin {
 	@Inject(method = "onChatMessage", at = @At("HEAD"))
 	private void message(MessageType messageType, Text message, UUID senderUuid, CallbackInfo info) {
 		if (message.getString().substring(message.getString().indexOf(">") + 2).startsWith("!")) {
-			ChatBot.getInstance().command(messageType, message, senderUuid);
+			ChatBot.getInstance();
+			ChatBot.command(messageType, message, senderUuid);
 		} else {
-			ChatBot.getInstance().debugInfo(messageType, message, senderUuid);
+			ChatBot.getInstance();
+			ChatBot.debugInfo(messageType, message, senderUuid);
 		}
 	}
 }
