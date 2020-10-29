@@ -12,7 +12,6 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 public class ClientPlayNetworkHandlerMixin {
   @Inject(method = "onWorldTimeUpdate", at = @At("RETURN"))
   private void onTimeUpdate(net.minecraft.network.packet.s2c.play.WorldTimeUpdateS2CPacket packetIn, CallbackInfo ci) {
-    ChatBot.getInstance();
     ChatBot.updateTPS(packetIn.getTime());
   }
 }
